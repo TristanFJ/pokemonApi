@@ -8,7 +8,7 @@ import {
 function _drawApiPokemon() {
   const pokemon = ProxyState.apiPokemon
   let template = ''
-  pokemon.forEach(p => template += `<p class="m-1 selectable" onclick="app.pokemonController.getPokemonIndex('${p.index}')">${p.name}</p>`)
+  pokemon.forEach(p => template += `<p class="m-1 selectable" onclick="app.pokemonController.getPokemonIndex('${p.name}')">${p.name}</p>`)
   document.getElementById('pokemon').innerHTML = template
 }
 
@@ -25,16 +25,23 @@ function _drawMyPokemon() {
   document.getElementById('my-pokemon').innerHTML = template
 }
 
+function _drawActivePokemon() {
+  let template = ''
+  if (ProxyState.activePokemon) {
+    template = ProxyState.activePokemon.Template
+  }
+  document.getElementById('active-pokemon').innerHTML = template
+}
 
 
 
 export class PokemonController {
   constructor() {
-
     this.getPokemon()
     this.getMyPokemon()
     ProxyState.on('apiPokemon', _drawApiPokemon)
     ProxyState.on('myPokemon', _drawMyPokemon)
+    ProxyState.on('activePokemon', _drawActivePokemon)
   }
 
   async getPokemon() {
@@ -54,11 +61,31 @@ export class PokemonController {
 
   }
 
-  async getPokemonIndex(index) {
+  async getPokemonIndex(id) {
     try {
-      await pokemonService.getPokemonIndex(index)
+      await pokemonService.getPokemonIndex(id)
     } catch (error) {
       console.error('[GETPOKEMONINDEX() ERROR: ]', error);
+    }
+  }
+
+  async addPokemon() {
+    try {
+      await pokemonService.addPokemon()
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  setActive(id) {
+    pokemonService.setActive(id)
+  }
+
+  async inParty() {
+    try {
+      await pokemonService.inParty()
+    } catch (error) {
+      console.log(error);
     }
   }
 
